@@ -10,12 +10,12 @@ lua lambda state storage middleware
         typename = "client",
         init = {},  -- optional
         handlers = {
-            ping = --[[
+            ping = [[
             function(ctx, client, params)
                 return "pong"
             end
             ]],
-            echo = --[[
+            echo = [[
             function(ctx, client, params)
                 return params
             end
@@ -27,13 +27,10 @@ lua lambda state storage middleware
     lotus.register(client_schema)
 
     -- init 只会执行一次 (如果 S 中 state 已存在, 则忽略)
-    local s = lotus.state.init(name, typename, t)
+    local s = lotus.init(typename, name, t)
 
-    -- 完全更新 state
-    local s = lotus.state.update(name, t)
-
-    -- 部分更新 state
-    local s = lotus.state.set(name, k1, k2, ..., v)
+    -- 更新 state, k1 ...  是可选的
+    local s = lotus.set(name, k1, k2, ..., v)
 
     -- rpc
     local pong = s:ping() -- pong == "pong"
