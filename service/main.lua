@@ -12,5 +12,8 @@ skynet.start(function()
         skynet.newservice("console")
     end
 
+    skynet.name("state-mgr", skynet.newservice("simple", "state-mgr"))
+    skynet.newservice("simple", "test")
+
     skynet.exit()
 end)

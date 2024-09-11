@@ -54,7 +54,7 @@ local function new_client(fd)
                 self.project = project
                 self.name = msg.name
                 self.id = string.format("%s.%s", project, msg.name) -- eg: "Game1.Gate1"
-                self.agent = skynet.newservice("simple", "agent", self.id)
+                self.agent = skynet.newservice("simple", "agent", self.project, self.name)
                 self.send{ ok = true, msg = "login success, welcome to lotus" }
                 clients[self.id] = self
             else
@@ -64,8 +64,10 @@ local function new_client(fd)
         end
     end
 
-    function self.disconnect()
-        self.fd = nil
+    function self.disconnect(fd)
+        if fd == self.fd then
+            self.fd = nil
+        end
     end
 
     return self
@@ -115,7 +117,7 @@ local function start(port)
                 c.message(json.decode(pack))
             end
         end
-        c.disconnect()
+        c.disconnect(fd)
     end
 
     local id = socket.listen("0.0.0.0", port)

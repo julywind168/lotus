@@ -1,11 +1,34 @@
 local skynet = require "skynet"
+local pubsub = require "pubsub"
 
 local S = {}
 
 
-function S.client(msg)
-    skynet.error("client message:", table.pretty(msg))
+local command = {}
+
+function command:register()
+    local schema = assert(self.schema)
+    skynet.send("state-mgr", "lua", "register", S._project, schema)
 end
+
+function command:init_state()
+    skynet.send("state-mgr", "lua", "init_state", S._project, self.typename, self.name, self.value)
+end
+
+function S.client(msg)
+    local name = msg.name
+    local params = msg.params
+    local f = command[name]
+    f(params)
+end
+
+
+pubsub.sub("_init", function(project, name)
+    S._id = ("%s.%s"):format(project, name)
+    S._project = project
+    S._name = name
+    skynet.error(("client(%s) init ok"):format(S._id))
+end)
 
 
 return S
