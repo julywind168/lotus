@@ -15,6 +15,10 @@ function command:init_state()
     skynet.send("state-mgr", "lua", "init_state", S._project, self.typename, self.name, self.value)
 end
 
+function command:execute_state()
+    skynet.send("state-mgr", "lua", "execute_state", S._project, self.statename, self.funcname, self.params)
+end
+
 function S.client(msg)
     local name = msg.name
     local params = msg.params

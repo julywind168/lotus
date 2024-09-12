@@ -12,12 +12,7 @@ lua lambda state storage middleware
         handlers = {
             ping = [[
             function(ctx, client, params)
-                return "pong"
-            end
-            ]],
-            echo = [[
-            function(ctx, client, params)
-                return params
+                ctx.log "pong"
             end
             ]]
         }
@@ -33,8 +28,21 @@ lua lambda state storage middleware
     -- 更新 state, k1 ...  是可选的
     local s = lotus.set(name, k1, k2, ..., v)
 
-    -- rpc
-    local pong = s:ping() -- pong == "pong"
+    -- remote exec (warn: no return value)
+    s:ping()
+
+-- socket command
+    -- 1. 'register-schema' (schema)
+    -- 2. 'init-state' (typename, statename, init_value)
+    -- 3. 'update-state' (statename, k1, k2, ..., v)
+    -- 4. 'execute-state' (statename, funcname, ...)
+```
+
+## Server API
+```lua
+-- ctx:
+-- 日志 ctx.log, ctx.warn, ctx.error
+
 
 
 ```

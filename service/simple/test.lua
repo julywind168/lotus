@@ -6,13 +6,8 @@ local client_schema = {
     init = {},  -- optional
     handlers = {
         ping = [[
-        function(ctx, client, params)
-            return "pong"
-        end
-        ]],
-        echo = [[
-        function(ctx, client, params)
-            return params
+        function(ctx, client, ...)
+            ctx.log("ping", ...)
         end
         ]]
     }
@@ -28,6 +23,13 @@ pubsub.sub_once("_init", function()
         name = "client.1",
         value = { a = 1, b = 2 }
     }})
+    skynet.send(agent, "lua", "client", {
+        name = "execute_state", params = {
+            statename = "client.1",
+            funcname = "ping",
+            params = {'A', 'B', 'C'}
+        }
+    })
 end)
 
 
