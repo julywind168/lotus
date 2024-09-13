@@ -31,7 +31,7 @@ local function new_client(fd)
     }
 
     function self.send(msg)
-        if fd and socket.write(fd, string.pack(">s2", json.encode(msg))) then
+        if self.fd and socket.write(self.fd, string.pack(">s2", json.encode(msg))) then
             -- pass
         else
             table.insert(self.msgcache, msg)
@@ -55,16 +55,17 @@ local function new_client(fd)
                 self.name = msg.name
                 self.id = string.format("%s.%s", project, msg.name) -- eg: "Game1.Gate1"
                 self.agent = skynet.newservice("simple", "agent", self.project, self.name)
-                self.send{ ok = true, msg = "login success, welcome to lotus" }
+                socket.write(self.fd, "200 OK, welcome to lotus\n")
                 clients[self.id] = self
             else
-                self.send{ ok = false, msg = err }
+                socket.write(self.fd, ("401 Unauthorized, %s\n"):format(err))
                 self.close()
             end
         end
     end
 
     function self.disconnect(fd)
+        skynet.error("Client disconnect:", fd)
         if fd == self.fd then
             self.fd = nil
         end
@@ -100,11 +101,12 @@ local function recv_package(fd, last)
     if r == "" then
         return nil, "closed"
     end
-    return unpack_package(last .. r)
+    return recv_package(fd, last .. r)
 end
 
 local function start(port)
     local function accept(fd, addr)
+        skynet.error("New client from : "..addr)
         local c = new_client(fd)
         socket.start(fd)
         local last = ""

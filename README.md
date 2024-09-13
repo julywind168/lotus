@@ -8,11 +8,14 @@ lua lambda state storage middleware
 ```lua
     local client_schema = {
         typename = "client",
+        unique = false,
         init = {},  -- optional
         handlers = {
             ping = [[
             function(ctx, client, params)
-                ctx.log "pong"
+                ctx.log("ping")
+                -- push msg to channel
+                ctx.publish("client-socket-" .. client.id, {name = "pong"})
             end
             ]]
         }
@@ -29,14 +32,15 @@ lua lambda state storage middleware
     local s = lotus.set(name, k1, k2, ..., v)
 
     -- remote exec (warn: no return value)
-    s:ping()
+    s.ping()
 
 -- message - queue
     local channel = lotus.channel(name)
-    channel:push(msg)
-    channel:subscribe(callback)
+    channel.subscribe(callback)
+    channel.push(msg)
+    channel.delete()
 
-    -- lotus.channel("client-socket-100001"):subscribe(filter, callback) -- filter is optional
+    -- lotus.channel("client-socket-100001"):subscribe(callback)
 
 -- socket request (command)
     -- 1. 'register-schema' (schema)

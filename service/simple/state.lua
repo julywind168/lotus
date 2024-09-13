@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local channel = require "channel"
 
 local S = {}
 
@@ -18,6 +19,16 @@ end
 
 function ctx.exit()
     skynet.send("state-mgr", "lua", "kill_state", S._project, S._name)
+end
+
+-- get a state proxy
+function ctx.state(name)
+
+end
+
+-- push a msg to channel
+function ctx.publish(ch_name, ...)
+    channel.query(("%s.%s"):format(S._project, ch_name)).pub(...)
 end
 
 

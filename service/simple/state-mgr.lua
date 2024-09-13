@@ -72,7 +72,7 @@ end
 
 function S.execute_state(project_name, statename, funcname, params)
     cs(function ()
-        S._project(project_name).execute_state(statename, funcname, params)    
+        S._project(project_name).execute_state(statename, funcname, params)
     end)
 end
 

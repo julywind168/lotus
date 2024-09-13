@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 local pubsub = require "pubsub"
+local channel = require "channel"
 
 local S = {}
 
@@ -12,11 +13,41 @@ function command:register()
 end
 
 function command:init_state()
-    skynet.send("state-mgr", "lua", "init_state", S._project, self.typename, self.name, self.value)
+    skynet.send("state-mgr", "lua", "init_state", S._project, self.typename, self.statename, self.value)
 end
 
 function command:execute_state()
     skynet.send("state-mgr", "lua", "execute_state", S._project, self.statename, self.funcname, self.params)
+end
+
+local subscribed = {}
+
+-- channel-subscribe
+function command:subscribe()
+    local ch_name = ("%s.%s"):format(S._project, self.channel)
+    if not subscribed[ch_name] then
+        subscribed[ch_name] =
+        channel.query(ch_name).sub(function (...)
+            S.send2client{
+                type = "channel_message",
+                channel = self.channel,
+                msg = {...}
+            }
+        end)
+    end
+end
+
+function command:unsubscribe()
+    local ch_name = ("%s.%s"):format(S._project, self.channel)
+    if subscribed[ch_name] then
+        subscribed[ch_name]() -- unsub()
+        subscribed[ch_name] = nil
+    end
+end
+
+
+function S.send2client(msg)
+    skynet.send("gateway", "lua", "send2client", S._id, msg)
 end
 
 function S.client(msg)
