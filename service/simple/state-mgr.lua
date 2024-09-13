@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local cs = require "skynet.queue"()
 
 local function newproject(name)
     local schemas = {}
@@ -54,12 +55,16 @@ end
 
 
 function S.init_state(project_name, typename, statename, value)
-    S._project(project_name).init_state(typename, statename, value)
+    cs(function ()
+        S._project(project_name).init_state(typename, statename, value)
+    end)
 end
 
 
 function S.execute_state(project_name, statename, funcname, params)
-    S._project(project_name).execute_state(statename, funcname, params)
+    cs(function ()
+        S._project(project_name).execute_state(statename, funcname, params)    
+    end)
 end
 
 
