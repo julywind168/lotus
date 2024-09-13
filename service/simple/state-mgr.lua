@@ -29,7 +29,16 @@ local function newproject(name)
         local typename = statetype[statename]
         local addr = states[typename][statename]
         if addr then
-            skynet.send(addr, "lua", "execute", funcname, params and table.unpack(params) or nil)
+            skynet.send(addr, "lua", "execute", funcname, params)
+        end
+    end
+
+    function self.kill_state(statename)
+        local typename = statetype[statename]
+        local addr = states[typename][statename]
+        if addr then
+            skynet.send(addr, "lua", "shutdown")
+            states[typename][statename] = nil
         end
     end
 
@@ -65,6 +74,11 @@ function S.execute_state(project_name, statename, funcname, params)
     cs(function ()
         S._project(project_name).execute_state(statename, funcname, params)    
     end)
+end
+
+
+function S.kill_state(project_name, statename)
+    S._project(project_name).kill_state(statename)
 end
 
 

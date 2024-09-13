@@ -31,7 +31,7 @@ pubsub.sub("_init", function(project, name)
     S._id = ("%s.%s"):format(project, name)
     S._project = project
     S._name = name
-    skynet.error(("client(%s) init ok"):format(S._id))
+    skynet.error(("[client: %s] started"):format(S._id))
 end)
 
 

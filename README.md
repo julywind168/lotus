@@ -41,8 +41,9 @@ lua lambda state storage middleware
 ## Server API
 ```lua
 -- ctx:
--- 日志 ctx.log, ctx.warn, ctx.error
+-- 日志: ctx.log, ctx.warn, ctx.error
 
+-- state 销毁: ctx.exit()
 
 
 ```

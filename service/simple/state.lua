@@ -1,5 +1,6 @@
 local skynet = require "skynet"
 
+local S = {}
 
 local ctx = {}
 
@@ -15,8 +16,11 @@ function ctx.error(...)
     skynet.error(...)
 end
 
+function ctx.exit()
+    skynet.send("state-mgr", "lua", "kill_state", S._project, S._name)
+end
 
-local S = {}
+
 local handlers = {}
 
 local function load_schema(schema)
@@ -30,10 +34,10 @@ local function load_schema(schema)
     end
 end
 
-function S.execute(funcname, ...)
+function S.execute(funcname, params)
     local f = handlers[funcname]
     if f then
-        f(ctx, S._state, ...)
+        f(ctx, S._state, table.unpack(params))
     else
         skynet.error(("unknown handler: %s"):format(funcname))
     end
@@ -47,6 +51,10 @@ function S.start(project, name, schema, value)
     load_schema(schema)
     skynet.error(("[state: %s.%s] started"):format(project, name))
     dump(S._state)
+end
+
+function S.shutdown()
+    skynet.exit()
 end
 
 

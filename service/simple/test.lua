@@ -7,7 +7,8 @@ local client_schema = {
     handlers = {
         ping = [[
         function(ctx, client, ...)
-            ctx.log("ping", ...)
+            client.counter = client.counter + 1
+            ctx.log(("ping %d"):format(client.counter), table.concat({...}, " "))
         end
         ]]
     }
@@ -21,15 +22,20 @@ pubsub.sub_once("_init", function()
     skynet.send(agent, "lua", "client", {name = "init_state", params = {
         typename = "client",
         name = "client.1",
-        value = { a = 1, b = 2 }
+        value = { counter = 0 }
     }})
-    skynet.send(agent, "lua", "client", {
-        name = "execute_state", params = {
-            statename = "client.1",
-            funcname = "ping",
-            params = {'A', 'B', 'C'}
-        }
-    })
+    -- ping 1
+    skynet.send(agent, "lua", "client", { name = "execute_state", params = {
+        statename = "client.1",
+        funcname = "ping",
+        params = {'A', 'B', 'C'}
+    }})
+    -- ping 2
+    skynet.send(agent, "lua", "client", { name = "execute_state", params = {
+        statename = "client.1",
+        funcname = "ping",
+        params = {'c', 'c++', 'lua'}
+    }})
 end)
 
 
