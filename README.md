@@ -31,11 +31,24 @@ lua lambda state storage middleware
     -- remote exec (warn: no return value)
     s:ping()
 
--- socket command
+-- message - queue
+    local channel = lotus.channel(name)
+    channel:push(msg)
+    channel:subscribe(callback)
+
+    -- lotus.channel("client-socket-100001"):subscribe(filter, callback) -- filter is optional
+
+-- socket request (command)
     -- 1. 'register-schema' (schema)
     -- 2. 'init-state' (typename, statename, init_value)
     -- 3. 'update-state' (statename, k1, k2, ..., v)
     -- 4. 'execute-state' (statename, funcname, ...)
+
+    -- 5. 'channel-subscribe'
+    -- 6. 'channel-push'
+
+-- socket message from lotus
+    -- 1. channel-msg (channel_name, msg)
 ```
 
 ## Server API
