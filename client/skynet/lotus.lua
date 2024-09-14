@@ -39,8 +39,11 @@ function lotus.init(typename, statename, value)
 end
 
 -- update a state
-function lotus.update(state, ...)
-
+function lotus.update(statename, ...)
+    local keys = {...}
+    local value = table.remove(keys)
+    assert(value)
+    client.send{name = "update_state", params = {statename = statename, keys = keys, value = value}}
 end
 
 local channel_cache = {}

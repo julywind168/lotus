@@ -25,6 +25,14 @@ local function newproject(name)
         end
     end
 
+    function self.update_state(statename, keys, value)
+        local typename = statetype[statename]
+        local addr = states[typename][statename]
+        if addr then
+            skynet.send(addr, "lua", "update", keys, value)
+        end
+    end
+
     function self.execute_state(statename, funcname, params)
         local typename = statetype[statename]
         local addr = states[typename][statename]
@@ -66,6 +74,12 @@ end
 function S.init_state(project_name, typename, statename, value)
     cs(function ()
         S._project(project_name).init_state(typename, statename, value)
+    end)
+end
+
+function S.update_state(project_name, statename, keys, value)
+    cs(function ()
+        S._project(project_name).update_state(statename, keys, value)
     end)
 end
 

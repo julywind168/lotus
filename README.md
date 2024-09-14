@@ -58,14 +58,29 @@ lua lambda state storage middleware
 ## Server API
 ```lua
 -- ctx:
--- 日志: ctx.log, ctx.warn, ctx.error
+    -- 日志
+    -- ctx.log(...), ctx.warn(...), ctx.error(...)
 
--- state 销毁: ctx.exit()
+    -- 销毁 state
+    -- ctx.exit()
+
+    -- 初始化一个 state
+    -- s = ctx.initstate(typename, statename, value)
+
+    -- 更新某个 state
+    -- s = ctx.updatestate(statename, k1, k2, ..., v)
+
+    -- 获得一个 remote state proxy
+    -- s = ctx.state(name)
+
+-- state:
+    -- s.ping() -- remote call (warn: no return value)
+
 ```
 
 ## Todo
 
-1. channel 添加缓存, 比如设置频道缓存最近 256 条消息
+1. channel 添加缓存, 比如设置频道缓存最近 256 条消息 (用于断线重连等)
 ```lua
     {{id: 100, msg: "hello"}, {id: 101, msg: "world"}, ...}
 ```
@@ -76,3 +91,4 @@ lua lambda state storage middleware
     -- 查询从 id = 100 开始的所有消息
     channel-history(channel_name, {from = {id = 100}})
 ```
+3. server 状态的持久化 (mongo or redis)
