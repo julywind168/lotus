@@ -61,6 +61,18 @@ lua lambda state storage middleware
 -- 日志: ctx.log, ctx.warn, ctx.error
 
 -- state 销毁: ctx.exit()
+```
 
+## Todo
 
+1. channel 添加缓存, 比如设置频道缓存最近 256 条消息
+```lua
+    {{id: 100, msg: "hello"}, {id: 101, msg: "world"}, ...}
+```
+2. client 可以主动查询频道历史消息
+```lua
+    -- 查询最后 10 条
+    channel-history(channel_name, {last = 10})
+    -- 查询从 id = 100 开始的所有消息
+    channel-history(channel_name, {from = {id = 100}})
 ```
