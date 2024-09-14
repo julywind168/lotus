@@ -11,14 +11,6 @@ local S = {
     timer_thread_running = false
 }
 
-function S._find_timer(name)
-    for name_, timer in pairs(S.timers) do
-        if name_ == name then
-            return timer
-        end
-    end
-end
-
 local ctx = {}
 
 function ctx.log(...)
