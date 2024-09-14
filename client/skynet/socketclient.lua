@@ -36,10 +36,11 @@ local M = {
     connected = false
 }
 
-function M.init(addr, conf)
+function M.init(addr, conf, handler)
     M.ip, M.port = addr:match("(.+):(%d+)")
     M.port = tonumber(M.port)
     M.conf = conf
+    M.handler = handler
     if M.connect() then
         M.login()
     end
@@ -84,11 +85,10 @@ function M.recv_thread()
         if not pack then
             break
         else
-            -- todo: handle msg
-            skynet.error("lotus socket message >>>>>>>", pack)
+            M.handler(json.decode(pack))
         end
     end
-    skynet.error("lotus server socket closed")
+    skynet.error("Lotus server socket closed")
 end
 
 

@@ -26,10 +26,10 @@ lua lambda state storage middleware
     lotus.register(client_schema)
 
     -- init 只会执行一次 (如果 S 中 state 已存在, 则忽略)
-    local s = lotus.init(typename, name, t)
+    local s = lotus.init(typename, statename, t)
 
     -- 更新 state, k1 ...  是可选的
-    local s = lotus.set(name, k1, k2, ..., v)
+    local s = lotus.update(statename, k1, k2, ..., v)
 
     -- remote exec (warn: no return value)
     s.ping()
@@ -37,7 +37,7 @@ lua lambda state storage middleware
 -- message - queue
     local channel = lotus.channel(name)
     channel.subscribe(callback)
-    channel.push(msg)
+    channel.publish(msg)
     channel.delete()
 
     -- lotus.channel("client-socket-100001"):subscribe(callback)

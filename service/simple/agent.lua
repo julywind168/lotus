@@ -24,10 +24,10 @@ local subscribed = {}
 
 -- channel-subscribe
 function command:subscribe()
-    local ch_name = ("%s.%s"):format(S._project, self.channel)
-    if not subscribed[ch_name] then
-        subscribed[ch_name] =
-        channel.query(ch_name).sub(function (...)
+    local name = ("%s.%s"):format(S._project, self.channel)
+    if not subscribed[name] then
+        subscribed[name] =
+        channel.query(name).sub(function (...)
             S.send2client{
                 type = "channel_message",
                 channel = self.channel,
@@ -38,11 +38,19 @@ function command:subscribe()
 end
 
 function command:unsubscribe()
-    local ch_name = ("%s.%s"):format(S._project, self.channel)
-    if subscribed[ch_name] then
-        subscribed[ch_name]() -- unsub()
-        subscribed[ch_name] = nil
+    local name = ("%s.%s"):format(S._project, self.channel)
+    if subscribed[name] then
+        subscribed[name]() -- unsub()
+        subscribed[name] = nil
     end
+end
+
+function command:publish()
+    channel.query(("%s.%s"):format(S._project, self.channel)).pub(self.msg)
+end
+
+function command:delete_channel()
+    channel.delete(("%s.%s"):format(S._project, self.channel))
 end
 
 
