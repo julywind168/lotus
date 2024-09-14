@@ -73,6 +73,12 @@ lua lambda state storage middleware
     -- 获得一个 remote state proxy
     -- s = ctx.state(name)
 
+    -- timer:
+    -- ctx.timeout(name, time, callback_name)
+    -- ctx.interval(name, time, callback_name)
+    -- ctx.querytimer(name)
+    -- ctx.killtimer(name)
+
 -- state:
     -- s.ping() -- remote call (warn: no return value)
 
