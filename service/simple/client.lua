@@ -10,6 +10,7 @@ local user_schema = {
         chat = [[
         function(ctx, me, msg)
             ctx.log(("%s say: %s"):format(me.id, msg))
+            ctx.publish("chat-world", {from = me.id, msg = msg})
         end
         ]]
     }
@@ -25,6 +26,11 @@ skynet.init(function ()
         name = "gate1"
     })
     lotus.register(user_schema)
+
+    lotus.channel("chat-world").subscribe(function (msg)
+        skynet.error("[chat-world] message: ", table.pretty(msg))
+    end)
+
     local user001 = lotus.init("user", "user#001", {id = "user#001"})
     user001.chat("hello lotus")
 end)

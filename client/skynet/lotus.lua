@@ -83,7 +83,7 @@ function handle:channel_message()
     local msg = self.msg
     local cb = lotus.subscribers[ch]
     if cb then
-        cb(msg)
+        cb(table.unpack(msg))
     else
         print("no subscriber for channel:", ch)
     end

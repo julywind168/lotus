@@ -13,7 +13,7 @@ skynet.start(function()
     end
 
     skynet.name("state-mgr", skynet.newservice("simple", "state-mgr"))
-    skynet.newservice("simple", "gateway")
+    skynet.name("gateway", skynet.newservice("simple", "gateway"))
     skynet.newservice("simple", "client") -- test client
 
     skynet.exit()
