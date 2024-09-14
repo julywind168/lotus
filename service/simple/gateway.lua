@@ -25,9 +25,7 @@ end
 local function new_client(fd)
     local self = {
         fd = fd,
-        verified = false,
-        msgcache = {},
-        token = string.random_str(8) -- for reconnect auth
+        verified = false
     }
 
     function self.send(msg)
@@ -50,12 +48,19 @@ local function new_client(fd)
             -- todo: handshake (reconnect)
             local project, err = auth(msg.account, msg.password)
             if project then
+                local id = ("%s.%s"):format(project, msg.name) -- eg: "game1.gate1"
+                local c = clients[id]
+                if c then
+                    c.close() -- kill old client
+                end
                 self.verified = true
                 self.project = project
                 self.name = msg.name
-                self.id = string.format("%s.%s", project, msg.name) -- eg: "Game1.Gate1"
-                self.agent = skynet.newservice("simple", "agent", self.project, self.name)
-                socket.write(self.fd, "200 OK, welcome to lotus\n")
+                self.id = id
+                self.token = string.random_str(8)
+                self.msgcache = c and c.msgcache or {}
+                self.agent = c and c.agent or skynet.newservice("simple", "agent", self.project, self.name)
+                socket.write(self.fd, ("200 OK (token:%s), welcome to lotus\n"):format(self.token))
                 clients[self.id] = self
             else
                 socket.write(self.fd, ("401 Unauthorized, %s\n"):format(err))
