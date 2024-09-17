@@ -98,3 +98,9 @@ lua lambda state storage middleware
     channel-history(channel_name, {from = {id = 100}})
 ```
 3. server 状态的持久化 (mongo or redis)
+
+## Ideas
+
+1. shchema 和 module 全部用字符串
+2. C 每次登陆时候, S会返回一个 列表 (type + name + md5), 不同的 md5,
+    才需要 register_schema, register_module
